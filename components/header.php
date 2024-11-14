@@ -208,16 +208,25 @@
             var urls = <?php echo json_encode($urls); ?>;
             var url = urls[testType];
             if (url) {
-                // Agrega el parámetro id a la URL
-                url += "?id=" + tracking;
-                window.location.href = url;
+                fetch('../php/mark_notification_viewed.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ tracking: tracking })
+                }).then(response => {
+                    if (response.ok) {
+                        url += "?id=" + tracking;
+                        window.location.href = url;
+                    } else {
+                        console.error("No se pudo marcar la notificación como vista.");
+                    }
+                });
             } else {
                 alert("No se encontró una URL para este tipo de prueba.");
             }
         <?php else : ?>
-            // Handle error when $urls is undefined
             console.error("Error: $urls is undefined.");
             alert("Error: $urls is undefined. Please contact the administrator.");
         <?php endif; ?>
     }
   </script>
+
